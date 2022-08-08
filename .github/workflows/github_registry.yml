@@ -3,6 +3,7 @@ name: CI to the Container registry
 on:
   push:
     branches: [ "main" ]
+    tags: [ "*" ]
   workflow_dispatch:
 
 env:
