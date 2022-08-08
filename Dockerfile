@@ -52,24 +52,6 @@ RUN dotnet_sdk_version=6.0.100 \
   # Trigger first run experience by running arbitrary cmd
   && dotnet help
 
-# Add package sources
-RUN echo "\
-  <configuration>\
-  <solution>\
-  <add key=\"disableSourceControlIntegration\" value=\"true\" />\
-  </solution>\
-  <packageSources>\
-  <clear />\
-  <add key=\"dotnet-experimental\" value=\"https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json\" />\
-  <add key=\"dotnet-public\" value=\"https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json\" />\
-  <add key=\"dotnet-eng\" value=\"https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json\" />\
-  <add key=\"dotnet-tools\" value=\"https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json\" />\
-  <add key=\"dotnet-libraries\" value=\"https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries/nuget/v3/index.json\" />\
-  <add key=\"dotnet5\" value=\"https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json\" />\
-  </packageSources>\
-  <disabledPackageSources />\
-  </configuration>\
-  " > ${HOME}/NuGet.config
 
 RUN chown -R ${NB_UID} ${HOME}
 USER ${USER}
@@ -77,8 +59,10 @@ USER ${USER}
 #Install nteract 
 RUN pip install nteract_on_jupyter
 
+COPY ./image ${HOME}
+
 # Install Microsoft.DotNet.Interactive
-RUN dotnet tool install -g Microsoft.dotnet-interactive --version 1.0.336204 --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json"
+RUN dotnet tool install -g Microsoft.dotnet-interactive --version 1.0.336204
 
 ENV PATH="${PATH}:${HOME}/.dotnet/tools"
 RUN echo "$PATH"
